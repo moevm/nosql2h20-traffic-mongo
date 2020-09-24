@@ -1,0 +1,21 @@
+version: '3.3'
+services:
+    mongo:
+        image: mongo:latest
+        restart: always
+        ports:
+            - "27017:27017"
+    backend:
+        network_mode: "host"
+        build:
+          context: ./backend
+        container_name: mse_openstreetmap_backend
+        ports:
+            - "5000:5000"
+    frontend:
+        network_mode: "host"
+        build:
+          context: ./frontend
+        container_name: mse_openstreetmap_frontend
+        ports:
+            - "5001:80"

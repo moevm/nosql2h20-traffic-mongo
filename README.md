@@ -36,5 +36,5 @@ npm start
 
 
 ### Demo reading/writing to mongodb
-![Demo](https://github.com/moevm/nosql2h20-traffic-mongo/blob/master/docs/media/output.gif?raw=true)
+![Demo](https://github.com/moevm/nosql2h20-traffic-mongo/blob/master/docs/media/demo.gif?raw=true)
 

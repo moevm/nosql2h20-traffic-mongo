@@ -2,13 +2,15 @@
 
 ## Docker deploy
 
+**Перед запуском проверьте, что у вас свободны порты: 80, 5000, 27017**
+
 ```bash
 docker-compose up # `-d` for daemon mode
 ```
 
-> backend - http://localhost:5000
+> go to http://localhost
 
-## Local deply
+## Local deploy
 
 ### backend
 
@@ -20,4 +22,15 @@ source venv/bin/activate
 pip3 install -r requirements.txt
 python3 app.py
 ```
+
+Перейти в директорию `frontend`
+
+### frontend
+
+```bash
+npm i
+npm start
+```
+
+> React должен сам открыть окно браузера
 

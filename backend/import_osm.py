@@ -24,6 +24,7 @@ def import_to_bd(filename):
     parser = make_parser()
     parser.setContentHandler(OSMXMLFileParser(db))
     parser.parse(filename)
+    return db
 
 
 class OSMXMLFileParser(ContentHandler):
@@ -68,9 +69,7 @@ class OSMXMLFileParser(ContentHandler):
             dbnode = {'_id': self.curr_node.id,
                       'lon': self.curr_node.lon,
                       'lat': self.curr_node.lat,
-                      'visible': self.curr_node.visible,
-                      'in_ways': [],
-                      'in_relations': []}
+                      'visible': self.curr_node.visible}
 
             if len(self.curr_node.tags) > 0:
                 dbnode['tags'] = self.curr_node.tags
@@ -78,13 +77,13 @@ class OSMXMLFileParser(ContentHandler):
             self.curr_node = None
 
         elif name == 'way':
-            dbway = {'_id': self.curr_way.id, 'visible': self.curr_way.visible, 'in_relations': [],
+            dbway = {'_id': self.curr_way.id, 'visible': self.curr_way.visible,
                      'nodes': self.curr_way.nodes, 'tags': self.curr_way.tags}
             self.db.ways.save(dbway)
             self.curr_way = None
 
         elif name == 'relation':
-            dbrelation = {'_id': self.curr_relation.id, 'in_relations': [], 'members': []}
+            dbrelation = {'_id': self.curr_relation.id, 'members': []}
             for member in self.curr_relation.members:
                 dbrelation['members'].append(member.list())
             dbrelation['tags'] = self.curr_relation.tags

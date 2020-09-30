@@ -16,11 +16,11 @@ class ApiMap(Resource):
         lon_from = float(args.get("lon_from"))
         lat_from = float(args.get("lat_from"))
         lon_to = float(args.get("lon_to"))
-        lat_from = float(args.get("lat_to"))
+        lat_to = float(args.get("lat_to"))
         return json.dumps(find_paths_from_one_point_to_another_point(
             lon_from,
             lat_from,
             lon_to,
-            lat_from
+            lat_to
         ))
         

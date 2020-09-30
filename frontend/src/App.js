@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import L from 'leaflet';
 import { Map, TileLayer, Marker, Popup } from 'react-leaflet';
-import AntPath from "react-leaflet-ant-path";
+import Paths from "./components/paths";
 import './App.css';
 
 const fromIcon = L.icon({
@@ -18,11 +18,20 @@ const toIcon = L.icon({
     popupAnchor: [0, -41]
 })
 
+const example_ways = [
+    {
+        way: [[59.9190, 30.3078], [59.9095, 30.3075]]
+    },
+    {
+        way: [[59.9170, 30.3078], [59.9095, 30.3075]]
+    }
+]
+
 function App() {
-    let arr = [[59.9190, 30.3078], [59.9095, 30.3075]]
+    let arr = [[59.9190, 30.3078], [59.9095, 30.3075]];
+    let arrs = example_ways;
     let [pos, setPos] = useState([59.9190, 30.3078]);
     let [zoom, setZoom] = useState(14);
-    console.log(pos);
     return (
         <div className="map">
             <Map className="map" center={pos} zoom={zoom}>
@@ -30,19 +39,7 @@ function App() {
                     attribution="&amp;copy <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors and Chat location by Iconika from the Noun Project"
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-                <AntPath positions={arr} options={{
-                    "delay": 400,
-                    "dashArray": [
-                        10,
-                        20
-                    ],
-                    "weight": 8,
-                    "color": "#0000FF",
-                    "pulseColor": "#FFFFFF",
-                    "paused": false,
-                    "reverse": false,
-                    "hardwareAccelerated": true
-                }} />
+                <Paths paths={arrs} />
                 <Marker position={pos} icon={fromIcon}>
                     <Popup>
                         A pretty CSS3 popup. <br /> Easily customizable.

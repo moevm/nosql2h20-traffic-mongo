@@ -51,7 +51,8 @@ def find_ways_for_node(id, ways):
 
 def find_relations_for_node(id, relations):
     res = []
-    # TODO
+    for rel in relations.find({'members.ref': {'$all': [id]}}):
+        res.append(rel['_id'])
     return res
 
 

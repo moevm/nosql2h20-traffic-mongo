@@ -45,7 +45,8 @@ def set_pointers_for_nodes(db):
 
 def find_ways_for_node(id, ways):
     res = []
-    # TODO
+    for way in ways.find({'nodes': {'$all': [id]}}):
+        res.append(way['_id'])
     return res
 
 

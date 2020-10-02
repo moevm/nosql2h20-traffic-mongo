@@ -1,6 +1,7 @@
 from pymongo import MongoClient
 
 MONGO_ENGINE = None
+DB_NAME = 'map_spb'
 
 
 def get_mongo():

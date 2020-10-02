@@ -1,5 +1,5 @@
 from xml.sax import ContentHandler, make_parser
-from pymongo import MongoClient
+from models.get_model import get_mongo
 from db_types import *
 
 
@@ -10,7 +10,7 @@ def db_clear(db):
 
 
 def create_db(name):
-    client = MongoClient('localhost', 27017)
+    client = get_mongo()
     db = client[name]
     dbnodes = db.nodes
     dbways = db.ways
@@ -25,6 +25,36 @@ def import_to_bd(filename):
     parser.setContentHandler(OSMXMLFileParser(db))
     parser.parse(filename)
     return db
+
+
+def set_pointers_for_nodes(db):
+    dbnodes = db.nodes
+    dbways = db.ways
+    dbrel = db.relations
+    for node in dbnodes.find():
+        node_id = node['_id']
+        n_ways = find_ways_for_node(node_id, dbways)
+        n_relations = find_relations_for_node(node_id, dbrel)
+        dbnodes.update_one(
+            {'_id': node_id},
+            {'$set':
+                 {'in_ways': n_ways,
+                  'in_relations': n_relations}
+             })
+
+
+def find_ways_for_node(id, ways):
+    res = []
+    for way in ways.find({'nodes': {'$all': [id]}}):
+        res.append(way['_id'])
+    return res
+
+
+def find_relations_for_node(id, relations):
+    res = []
+    for rel in relations.find({'members.ref': {'$all': [id]}}):
+        res.append(rel['_id'])
+    return res
 
 
 class OSMXMLFileParser(ContentHandler):
@@ -69,7 +99,8 @@ class OSMXMLFileParser(ContentHandler):
             dbnode = {'_id': self.curr_node.id,
                       'lon': self.curr_node.lon,
                       'lat': self.curr_node.lat,
-                      'visible': self.curr_node.visible}
+                      'visible': self.curr_node.visible,
+                      'in_ways': [], 'in_relations': []}
 
             if len(self.curr_node.tags) > 0:
                 dbnode['tags'] = self.curr_node.tags

@@ -1,5 +1,5 @@
 from xml.sax import ContentHandler, make_parser
-from pymongo import MongoClient
+from models.get_model import get_mongo
 from db_types import *
 
 
@@ -10,7 +10,7 @@ def db_clear(db):
 
 
 def create_db(name):
-    client = MongoClient('localhost', 27017)
+    client = get_mongo()
     db = client[name]
     dbnodes = db.nodes
     dbways = db.ways
@@ -69,7 +69,8 @@ class OSMXMLFileParser(ContentHandler):
             dbnode = {'_id': self.curr_node.id,
                       'lon': self.curr_node.lon,
                       'lat': self.curr_node.lat,
-                      'visible': self.curr_node.visible}
+                      'visible': self.curr_node.visible,
+                      'in_ways': [], 'in_relations': []}
 
             if len(self.curr_node.tags) > 0:
                 dbnode['tags'] = self.curr_node.tags

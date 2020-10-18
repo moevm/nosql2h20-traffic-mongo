@@ -1,7 +1,7 @@
 version: '3.3'
 services:
     mongo:
-        image: mongo:latest
+        image: andregavril/nosql2h20-traffic-mongo
         restart: always
         ports:
             - "27017:27017"

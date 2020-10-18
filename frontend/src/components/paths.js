@@ -47,7 +47,10 @@ function getOptions(index) {
 
 const Paths = ({paths}) => {
     let listPaths = []
+    console.log('WAYS: ', paths);
+    console.log(typeof paths);
     paths.forEach( (value, index) => {
+        console.log(value, index);
         listPaths.push(<AntPath key={index} positions={value.way} options={getOptions(index)}/>)
     })
     return <>{listPaths}</>

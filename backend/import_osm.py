@@ -27,6 +27,36 @@ def import_to_bd(filename):
     return db
 
 
+def set_pointers_for_nodes(db):
+    dbnodes = db.nodes
+    dbways = db.ways
+    dbrel = db.relations
+    for node in dbnodes.find():
+        node_id = node['_id']
+        n_ways = find_ways_for_node(node_id, dbways)
+        n_relations = find_relations_for_node(node_id, dbrel)
+        dbnodes.update_one(
+            {'_id': node_id},
+            {'$set':
+                 {'in_ways': n_ways,
+                  'in_relations': n_relations}
+             })
+
+
+def find_ways_for_node(id, ways):
+    res = []
+    for way in ways.find({'nodes': {'$all': [id]}}):
+        res.append(way['_id'])
+    return res
+
+
+def find_relations_for_node(id, relations):
+    res = []
+    for rel in relations.find({'members.ref': {'$all': [id]}}):
+        res.append(rel['_id'])
+    return res
+
+
 class OSMXMLFileParser(ContentHandler):
     def __init__(self, db):
         self.db = db

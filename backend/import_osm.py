@@ -1,7 +1,7 @@
 from xml.sax import ContentHandler, make_parser
 from models.get_model import get_mongo
 from db_types import *
-
+import sys
 
 def db_clear(db):
     db.nodes.remove()
@@ -120,3 +120,8 @@ class OSMXMLFileParser(ContentHandler):
             dbrelation['tags'] = self.curr_relation.tags
             self.db.relations.save(dbrelation)
             self.curr_relation = None
+
+
+if __name__ == "__main__":
+   db = import_to_bd(sys.argv[1])
+   set_pointers_for_nodes(db)

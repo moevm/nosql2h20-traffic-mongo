@@ -12,6 +12,8 @@ services:
         container_name: mse_openstreetmap_backend
         ports:
             - "5000:5000"
+        environment:
+            - PYTHONUNBUFFERED=1
     frontend:
         network_mode: "host"
         build:

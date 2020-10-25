@@ -9,6 +9,6 @@ RUN pwd
 
 COPY . .
 
-RUN mongod --bind_ip_all & (python3 ./import_osm.py ./map && mongod --shutdown)
+RUN mv ./run.sh /docker-entrypoint-initdb.d/run.sh
 
 EXPOSE 27017

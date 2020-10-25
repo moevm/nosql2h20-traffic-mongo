@@ -21,6 +21,8 @@ def create_db(name):
 
 def import_to_bd(filename):
     db = create_db('map_spb')
+    if len(db.list_collection_names()) >= 3:
+        return None
     parser = make_parser()
     parser.setContentHandler(OSMXMLFileParser(db))
     parser.parse(filename)

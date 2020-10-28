@@ -113,8 +113,7 @@ class OSMXMLFileParser(ContentHandler):
             dbnode = {'_id': self.curr_node.id,
                       'lon': self.curr_node.lon,
                       'lat': self.curr_node.lat,
-                      'visible': self.curr_node.visible,
-                      'in_ways': [], 'in_relations': []}
+                      'in_ways': []}
 
             if len(self.curr_node.tags) > 0:
                 dbnode['tags'] = self.curr_node.tags
@@ -122,8 +121,7 @@ class OSMXMLFileParser(ContentHandler):
             self.curr_node = None
 
         elif name == 'way':
-            dbway = {'_id': self.curr_way.id, 'visible': self.curr_way.visible,
-                     'nodes': self.curr_way.nodes, 'tags': self.curr_way.tags}
+            dbway = {'_id': self.curr_way.id, 'nodes': self.curr_way.nodes, 'avg_speed': 0, 'tags': self.curr_way.tags}
             for node in self.curr_way.nodes:
                 ways = self.db.nodes.find_one({'_id': node})['in_ways']
                 ways.append(self.curr_way.id)

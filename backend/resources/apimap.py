@@ -17,22 +17,11 @@ class ApiMap(Resource):
         lat_from = float(args.get("lat_from"))
         lon_to = float(args.get("lon_to"))
         lat_to = float(args.get("lat_to"))
-        demo_answer = [
+        answer = [
         {
-            "way": [
-                [59.9190, 30.3078], [lon_to, lat_to-0.001]
-                ]
+            "way": find_paths_from_one_point_to_another_point(lon_from, lat_from, lon_to, lat_to)
         }
         ]
         return make_response(
-        jsonify({"path": demo_answer}),
+        jsonify({"path": answer}),
          200)
-        '''
-        #json.dumps({"path": demo_answer})
-        #return json.dumps(find_paths_from_one_point_to_another_point(
-        #    lon_from,
-        #    lat_from,
-        #    lon_to,
-        #    lat_to
-        #))
-        '''

@@ -1,6 +1,7 @@
 version: '3.3'
 services:
     mongo:
+        network_mode: "host"
         image: andregavril/nosql2h20-traffic-mongo
         restart: always
         ports:
@@ -19,5 +20,3 @@ services:
         build:
           context: ./frontend
         container_name: mse_openstreetmap_frontend
-        ports:
-            - "80:80"

@@ -1,6 +1,7 @@
 from models.get_model import get_mongo, DB_NAME
+from flask import g
+from math import radians
 import numpy
-
 # this is mongo!
 db = get_mongo()[DB_NAME]
 FIND_RANGE = 0.001
@@ -14,8 +15,7 @@ def find_paths(x0, y0, x1, y1):
         return [[x0, y0], [x1, y1]]
     else:
         return [[x0, y0]] + way + [[x1, y1]]
-    # Should returns array of ways
-    # request to db | some algortms
+
 
 def find_nearest_node(x, y):
     dbnodes = db.nodes
@@ -80,7 +80,10 @@ def find_way(nodeid_from, nodeid_to):
             nodes_list.append((get_distance(nodeid_to, node), node, curr))
     if is_found:
         res = find_back_path(nodeid_from, nodeid_to, passed_nodes)
+        g.last_path = res
         res = [get_node_coords(i) for i in res]
+        g.last_path_len = find_path_len(res)
+        print(f'Way length is {sum(g.last_path_len)}')
         return res
     else:
         print('Cannot find way!')
@@ -134,3 +137,15 @@ def get_distance(node1_id, node2_id):
     b = numpy.array(get_node_coords(node2_id))
     return numpy.linalg.norm(a - b)
 
+
+def find_path_len(path):
+    l = []
+    R = 6371
+    for i in range(len(path) - 1):
+        lat1, lat2 = (path[i][0], path[i+1][0])
+        lon1, lon2 = (path[i][1], path[i + 1][1])
+        lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
+        sin1 = numpy.sin((lat1 - lat2) / 2)
+        sin2 = numpy.sin((lon1 - lon2) / 2)
+        l.append(2 * R * numpy.arcsin(numpy.sqrt(sin1 * sin1 + sin2 * sin2 * numpy.cos(lat1) * numpy.cos(lat2))))
+    return l

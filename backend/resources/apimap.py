@@ -12,7 +12,7 @@ parser.add_argument('lat_from', location='args')
 class ApiMap(Resource):
     
     def get(self):
-        args = parser.parse_args()
+        args = parser
         lon_from = float(args.get("lon_from"))
         lat_from = float(args.get("lat_from"))
         lon_to = float(args.get("lon_to"))

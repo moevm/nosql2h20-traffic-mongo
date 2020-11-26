@@ -1,7 +1,7 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {Form, Button, FormControl} from "react-bootstrap";
 import MainContainer from "../containers/MainContainer";
-
+import axios from 'axios';
 
 export default function Data() {
     const [file, setFile] = useState("");
@@ -10,29 +10,42 @@ export default function Data() {
         setFile(event.target.files[0]);
     };
 
-    useEffect(() => {
-        if (file !== "")
-        {
-            const formData = new FormData();
-            formData.append(
-                "myFile",
-                file,
-                file.name
-            );
-        }
-    }, [file])
+    const onFileUpload = () => {
+        const formData = new FormData();
+        formData.append(
+            "myFile",
+            file,
+            file.name
+        );
+
+        axios.post("/api/bd", formData).then(res => {
+            console.log(res.status);
+        });
+    };
+
 
     return (<MainContainer>
         <Form>
+            <br/>
             <h2>Import</h2>
+            <br/>
+            <Button variant={"success"} onClick={onFileUpload}>
+                Import
+            </Button>
+            <br/>
+            <br/>
             <FormControl
                 type="file"
                 onChange={onFileChange}/>
 
+
             <h2>Export</h2>
-            <Button variant="primary" type="submit">
-                Export
-            </Button>
+            <a href={"api/bd"} target="_blank" rel="noopener noreferrer" download>
+                <Button>
+                    <i className="fas fa-download"/>
+                    Download File
+                </Button>
+            </a>
         </Form>
     </MainContainer>)
 }

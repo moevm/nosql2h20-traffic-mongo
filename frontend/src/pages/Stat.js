@@ -76,9 +76,13 @@ export default function Stat() {
             data.datasets[0].data = info.generalData;
             return data
         }} options={options}/>
+        <Bar data={() => {
+            data.datasets[0].data = info.generalData;
+            return data
+        }} options={options}/>
         <h2>Общее время и средний балл пробки</h2>
-        <p>avg time - {info.avgTime}</p>
-        <p>avg level traffic jam - {info.avgLevel}</p>
+        <p><i>avg time</i> - {info.avgTime}</p>
+        <p><i>avg level traffic jam</i> - {info.avgLevel}</p>
         <ToggleButtonGroup type="checkbox">
             <ToggleButton variant="danger" onChange={() => setCategory(NO_MOVE)} value={NO_MOVE}>NO move almost</ToggleButton>
             <ToggleButton variant="warning" onChange={() => setCategory(SLOW)} value={SLOW}>Slow</ToggleButton>

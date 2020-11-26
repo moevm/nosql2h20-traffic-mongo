@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {Table, ToggleButtonGroup, ToggleButton} from "react-bootstrap";
 import MainContainer from "../containers/MainContainer";
-import {Bar} from '@reactchartjs/react-chart.js'
+import {Bar, Pie} from '@reactchartjs/react-chart.js'
 import uuid from 'react-uuid'
 
 const NO_MOVE = 0
@@ -72,7 +72,7 @@ export default function Stat() {
     return (<MainContainer>
         <h1>Статистика пробок на пути</h1>
         <h2>График </h2>
-        <Bar data={() => {
+        <Pie data={() => {
             data.datasets[0].data = info.generalData;
             return data
         }} options={options}/>

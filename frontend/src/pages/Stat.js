@@ -1,21 +1,93 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {Table, ToggleButtonGroup, ToggleButton} from "react-bootstrap";
 import MainContainer from "../containers/MainContainer";
+import {Bar, Pie} from '@reactchartjs/react-chart.js'
+import uuid from 'react-uuid'
 
+const NO_MOVE = 0
+const SLOW = 1
+const NORMAL = 2
+const ALL = 3
+
+let data = {
+    labels: [0, 1, 2, 3],
+    datasets: [
+        {
+            label: 'Traffic jam level',
+            data: [12, 19, 3, 5],
+            backgroundColor: [
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(255, 99, 132, 0.2)',
+            ],
+            borderColor: [
+                'rgba(75, 192, 192, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(255, 99, 132, 1)',
+            ],
+            borderWidth: 2,
+        },
+    ],
+}
+
+const options = {
+    scales: {
+        yAxes: [
+            {
+                ticks: {
+                    beginAtZero: true,
+                },
+            },
+        ],
+    },
+}
+
+
+const testData = [
+    {
+        id: 1,
+        time: "sdsa",
+        trafficJamLevel: 3
+    },
+    {
+        id: 2,
+        time: "sdsaf",
+        trafficJamLevel: 34
+    }
+]
 
 export default function Stat() {
+    let [info, setInfo] = useState({avgTime: "0", avgLevel: 2, data: testData, generalData: [12, 10, 3, 5] })
+    let [category, setCategory] = useState(ALL)
+
+    useEffect( () => {
+            fetch(`/api/stat?category=${category}`)
+                .then(res => res.json())
+                .then(result => setInfo(result))
+                .catch(err => console.log(err))
+        },
+        [category])
     return (<MainContainer>
         <h1>Статистика пробок на пути</h1>
         <h2>График </h2>
-        <img src={"https://raw.githubusercontent.com/moevm/nosql2h20-traffic-mongo/master/docs/media/andr_model.jpg"}/>
+        <Pie data={() => {
+            data.datasets[0].data = info.generalData;
+            return data
+        }} options={options}/>
+        <Bar data={() => {
+            data.datasets[0].data = info.generalData;
+            return data
+        }} options={options}/>
         <h2>Общее время и средний балл пробки</h2>
-        <p>avg time - 7 min 34 sec</p>
-        <p>avg level traffic jam - 5.8</p>
+        <p><i>avg time</i> - {info.avgTime}</p>
+        <p><i>avg level traffic jam</i> - {info.avgLevel}</p>
         <ToggleButtonGroup type="checkbox">
-            <ToggleButton variant="danger" value={1}>NO move almost</ToggleButton>
-            <ToggleButton variant="warning" value={2}>Slow</ToggleButton>
-            <ToggleButton variant="success" value={3}>Fast</ToggleButton>
-            <ToggleButton variant="secondary" value={3}>Reset</ToggleButton>
+            <ToggleButton variant="danger" onChange={() => setCategory(NO_MOVE)} value={NO_MOVE}>NO move almost</ToggleButton>
+            <ToggleButton variant="warning" onChange={() => setCategory(SLOW)} value={SLOW}>Slow</ToggleButton>
+            <ToggleButton variant="success" onChange={() => setCategory(NORMAL)} value={NORMAL}>Fast</ToggleButton>
+            <ToggleButton variant="secondary" onChange={() => setCategory(ALL)} value={ALL}>Reset</ToggleButton>
         </ToggleButtonGroup>
         <br/>
         <br/>
@@ -24,26 +96,20 @@ export default function Stat() {
             <tr>
                 <th>#</th>
                 <th>id Way</th>
-                <th>Coordinate</th>
                 <th>Time</th>
                 <th>traffic jams level</th>
             </tr>
             </thead>
             <tbody>
-            <tr>
-                <td>1</td>
-                <td>3124</td>
-                <td>175.12 - 1243.312</td>
-                <td>3 min 59 sec</td>
-                <td>3</td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>3126</td>
-                <td>41243.21312 - 213123.123</td>
-                <td>5 min 11 sec</td>
-                <td>8</td>
-            </tr>
+            {info.data.map((value, index) => {
+                return <tr key={uuid()}>
+                    <td>{index}</td>
+                    <td>{value.id}</td>
+                    <td>{value.time}</td>
+                    <td>{value.trafficJamLevel}</td>
+                </tr>
+            })}
+
             </tbody>
         </Table>
     </MainContainer>);

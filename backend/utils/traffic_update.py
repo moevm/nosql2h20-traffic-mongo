@@ -32,7 +32,7 @@ def update_all_at_once(ways, db):
             UpdateOne(
                 {'_id': el['_id']},
                 {'$set':
-                     {'avg_speed': random.randint(0, 100)}
+                     {'avg_speed': random.uniform(0, 100)}
                  }
             )
             for el in ways]
@@ -42,4 +42,4 @@ def update_all_at_once(ways, db):
         print(bwe.details)
     except BaseException:
         print("Unrecognized error")
-    time.sleep(5 * 60)
+    time.sleep(10 * 60)

@@ -3,8 +3,13 @@ from models.find_ways import get_lvl_from_speed
 import json
 
 
-def get_stat_info():
-    ways = get_last_path_ways()
+def get_stat_info(category):
+    print("Start getting statistics, category: {}".format(category))
+    ways = get_last_path_ways(category)
+    if len(ways) == 0:
+        return {
+            'error': 'No such ways'
+        }
     avg = 0
     avg_speed = 0
     for way in ways:

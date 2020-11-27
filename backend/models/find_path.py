@@ -80,11 +80,11 @@ def find_way(nodeid_from, nodeid_to):
             nodes_list.append((get_distance(nodeid_to, node), node, curr))
     if is_found:
         res = find_back_path(nodeid_from, nodeid_to, passed_nodes)
-        with open('last_path.json', 'w+') as file:
+        with open('last_path.json', 'w') as file:
             last_path = [{f'{i}': val} for i, val in enumerate(res)]
             json.dump(last_path, file)
         res = [get_node_coords(i) for i in res]
-        with open('last_path_len.json', 'w+') as file:
+        with open('last_path_len.json', 'w') as file:
             last_path_len = find_path_len(res)
             last_path = {'last_path_lens': last_path_len}
             json.dump(last_path, file)

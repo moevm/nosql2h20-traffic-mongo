@@ -1,7 +1,6 @@
 from models.get_stat_info import get_last_path_ways, get_traffic_stat
 from models.find_ways import get_lvl_from_speed
-from flask import g
-
+import json
 
 def get_stat_info():
     ways = get_last_path_ways()
@@ -12,11 +11,14 @@ def get_stat_info():
         avg_speed += speed
         avg += get_lvl_from_speed(speed)
     avg /= len(ways)
+    with open('last_path_len.json') as file:
+        last_path_len = json.load(file)
+        last_path_len = last_path_len['last_path_lens']
     data = []
     for i in range(len(ways)):
         data.append(
             {'id': ways[i]['_id'],
-             'time': ways[i]['avg_speed'] * g.last_path_len[i],
+             'time': ways[i]['avg_speed'] * last_path_len[i],
              'trafficJamLevel': get_lvl_from_speed(ways[i]['avg_speed'])
              }
         )
@@ -27,5 +29,4 @@ def get_stat_info():
         'data': data,
         'generalData': get_traffic_stat()
     }
-    print(result)
     return result

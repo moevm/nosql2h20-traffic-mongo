@@ -21,7 +21,8 @@ def get_ways(min_lvl, max_lvl, name):
     db = get_mongo()[DB_NAME]
     ways = db.ways
     speed_limit = (get_speed_from_lvl(max_lvl)[0], get_speed_from_lvl(min_lvl)[1])
-    if name == '':
+    print(name)
+    if name == "":
         res = ways.find(
             {
                 'avg_speed':

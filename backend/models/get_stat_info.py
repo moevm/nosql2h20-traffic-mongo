@@ -1,10 +1,13 @@
-from flask import g
+import json
 from models.get_model import get_mongo, DB_NAME
 from models.find_ways import get_speed_from_lvl
 
 
 def get_last_path_ways():
-    ways = get_ways(g.last_path)
+    with open('last_path.json') as file:
+        last_path = json.load(file)
+        last_path = [el[f'{i}'] for i, el in enumerate(last_path)]
+    ways = get_ways(last_path)
     return ways
 
 

@@ -12,9 +12,9 @@ class Ways(Resource):
     # PAGE - http://localhost:3000/traffic
     def get(self):
         args = parser.parse_args()
-        name = args.get("name")
-        min_jam = int(args.get("min_jam"), 0)
-        max_jam = int(args.get("max_jam"), 3)
+        name = args.get("way_id", "")
+        min_jam = int(args.get("min_jam", 0))
+        max_jam = int(args.get("max_jam", 3))
         result = get_ways_info(min_jam, max_jam, name)
         return make_response(
             jsonify(result),

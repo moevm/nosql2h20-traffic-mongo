@@ -4,9 +4,13 @@ from models.find_ways import get_speed_from_lvl
 
 
 def get_last_path_ways(category):
-    with open('last_path.json') as file:
-        last_path = json.load(file)
-        last_path = [el[f'{i}'] for i, el in enumerate(last_path)]
+    try:
+        with open('last_path.json') as file:
+            last_path = json.load(file)
+            last_path = [el[f'{i}'] for i, el in enumerate(last_path)]
+    except BaseException as err:
+        print(err)
+        return []
     ways = get_ways(last_path, category)
     return ways
 

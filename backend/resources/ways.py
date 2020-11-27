@@ -16,6 +16,7 @@ class Ways(Resource):
         min_jam = int(args.get("min_jam", 0))
         max_jam = int(args.get("max_jam", 3))
         result = get_ways_info(min_jam, max_jam, name)
+        result.sort(key=lambda way: way['name'])
         return make_response(
             jsonify(result),
             200)

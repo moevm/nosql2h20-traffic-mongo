@@ -11,7 +11,7 @@ def find_paths(x0, y0, x1, y1):
     nodeid_from = find_nearest_node(x0, y0)
     nodeid_to = find_nearest_node(x1, y1)
     way = find_way(nodeid_from, nodeid_to)
-    if (nodeid_from is None) or (nodeid_to is None) or (way is []):
+    if (nodeid_from is None) or (nodeid_to is None) or (way == []):
         return [[x0, y0], [x1, y1]]
     else:
         return [[x0, y0]] + way + [[x1, y1]]
@@ -19,26 +19,31 @@ def find_paths(x0, y0, x1, y1):
 
 def find_nearest_node(x, y):
     dbnodes = db.nodes
-    nearest_nodes = dbnodes.find({
-        'lon': {
-            '$gt': y - FIND_RANGE,
-            '$lt': y + FIND_RANGE
-        },
-        'lat': {
-            '$gt': x - FIND_RANGE,
-            '$lt': x + FIND_RANGE
-        },
-        'in_ways': {
-            '$ne': []
-        }
-    })
+    nearest_nodes = None
+    range = FIND_RANGE
+    while nearest_nodes is None:
+        nearest_nodes = dbnodes.find({
+            'lon': {
+                '$gt': y - range,
+                '$lt': y + range
+            },
+            'lat': {
+                '$gt': x - range,
+                '$lt': x + range
+            },
+            'in_ways': {
+                '$ne': []
+            }
+        })
+        range += FIND_RANGE
     return find_min_distance(x, y, nearest_nodes)
 
 
 def find_min_distance(x0, y0, nodes):
     a = numpy.array([x0, y0])
-    res = None
-    min_dist = 1
+    res = nodes[0]['_id']
+    b = numpy.array(get_node_coords(nodes[0]['_id']))
+    min_dist = numpy.linalg.norm(a - b)
     for node in nodes:
         useless_node = True
         way_ids = node['in_ways']
@@ -63,6 +68,7 @@ def find_min_distance(x0, y0, nodes):
 def find_way(nodeid_from, nodeid_to):
     nodes_list = [(0.0, nodeid_from, nodeid_from)]
     passed_nodes = {}
+    print(f'Searching for way: from {nodeid_from} to {nodeid_to}')
     is_found = False
     while len(nodes_list) > 0:
         nodes_list = sorted(nodes_list, key=lambda node: node[0])
@@ -72,6 +78,9 @@ def find_way(nodeid_from, nodeid_to):
         if curr == nodeid_to:
             is_found = True
             print("Way was found!")
+            break
+        if len(nodes_list) > 20000:
+            is_found = False
             break
         neighb_nodes = get_neighb_nodes(curr)
         for node in neighb_nodes:
@@ -132,6 +141,7 @@ def find_back_path(nodeid_from, nodeid_to, passed_nodes):
 def get_node_coords(node_id):
     node = db.nodes.find_one({'_id': node_id})
     if node is None:
+        print('get_node_coords: Node is not found (node_id={})'.format(node_id))
         return None
     else:
         return [node['lat'], node['lon']]

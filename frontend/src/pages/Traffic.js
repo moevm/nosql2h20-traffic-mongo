@@ -21,15 +21,16 @@ const testJson = [
 
 export default function Traffic() {
     let [min, setMin] = useState(0);
-    let [max, setMax] = useState(10);
+    let [max, setMax] = useState(3);
     let [valueFilter, setValueFilter] = useState(0);
     let [tableData, setTableData] = useState(testJson)
 
     const updateTable = () => {
-        fetch(`/api/way?way_id=${valueFilter}&min_jam=${min}&max_jam=${max}`)
-            .then(res => res.json())
-            .then(result => setTableData(result))
-            .catch(err => console.log(err))
+        if (!(parseInt(max) >= 3 || parseInt(min) <= 0))
+            fetch(`/api/way?way_id=${valueFilter}&min_jam=${min}&max_jam=${max}`)
+                .then(res => res.json())
+                .then(result => setTableData(result))
+                .catch(err => console.log(err))
     }
     return <>
         <MainContainer>
@@ -42,7 +43,7 @@ export default function Traffic() {
                         <Form.Control onChange={e => setMin(e.target.value)} placeholder="Min range (default - 0)"/>
                     </Col>
                     <Col>
-                        <Form.Control onChange={e => setMax(e.target.value)} placeholder="Max range  (default - 10)"/>
+                        <Form.Control onChange={e => setMax(e.target.value)} placeholder="Max range  (default - 3)"/>
                     </Col>
                 </Form.Row>
             </Form>

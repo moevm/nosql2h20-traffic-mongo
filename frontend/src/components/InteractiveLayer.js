@@ -26,6 +26,7 @@ const InteractiveLayer = () => {
             .then(res => res.json())
             .then(result => {
                 setRawPath(result["path"]);
+                console.log('win');
             })
             .catch(err => {
                 console.log('ERROR', err);

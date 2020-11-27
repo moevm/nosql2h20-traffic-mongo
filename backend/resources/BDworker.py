@@ -1,4 +1,4 @@
-from flask import jsonify, make_response, send_file
+from flask import jsonify, make_response, send_file, request
 from flask_restful import Resource
 from controllers.exportcontroller import export_data_base
 
@@ -11,6 +11,10 @@ class BDworker(Resource):
 
     # not tested
     def post(self):
+        filename = list(request.files)[0]
+        file = request.files[filename]
+        print('fileName - ' + filename)
+        file.save(filename)
         return make_response(
             jsonify({}),
             201)

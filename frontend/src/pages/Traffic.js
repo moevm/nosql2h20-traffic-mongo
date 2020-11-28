@@ -1,5 +1,5 @@
-import React,  {useState, useEffect} from "react";
-import {Form, FormControl, InputGroup, Table} from "react-bootstrap";
+import React, {useState, useEffect} from "react";
+import {Form, Spinner, FormControl, InputGroup, Table} from "react-bootstrap";
 import MainContainer from "../containers/MainContainer";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
@@ -22,15 +22,22 @@ const testJson = [
 export default function Traffic() {
     let [min, setMin] = useState(0);
     let [max, setMax] = useState(3);
+    let [isLoading, setIsLoading] = useState(false);
     let [valueFilter, setValueFilter] = useState(0);
     let [tableData, setTableData] = useState(testJson)
 
     const updateTable = () => {
-        if (!(parseInt(max) >= 3 || parseInt(min) <= 0))
+        if (parseInt(max) <= 3 && parseInt(min) >= 0) {
+
             fetch(`/api/way?way_id=${valueFilter}&min_jam=${min}&max_jam=${max}`)
                 .then(res => res.json())
-                .then(result => setTableData(result))
+                .then(result => {
+                    setIsLoading(false);
+                    setTableData(result);
+                })
                 .catch(err => console.log(err))
+        }
+
     }
     return <>
         <MainContainer>
@@ -53,32 +60,46 @@ export default function Traffic() {
                 <InputGroup className="mb-3">
                     <FormControl onChange={e => setValueFilter(e.target.value)} placeholder="Find way by id"/>
                     <InputGroup.Append>
-                        <Button variant="primary" onClick={updateTable}>search</Button>
+                        <Button variant="primary" onClick={() => {
+                            setIsLoading(true);
+                            updateTable()
+                        }}>search</Button>
                     </InputGroup.Append>
                 </InputGroup>
             </Row>
             <br/>
-            <Table striped bordered hover>
-                <thead>
-                <tr>
-                    <th>#</th>
-                    <th>id Way</th>
-                    <th>traffic jams level</th>
-                    <th>Street Name</th>
-                </tr>
-                </thead>
-                <tbody>
-                    {tableData.map((value, index) => {
-                        return <tr key={uuid()}>
-                            <td>{index}</td>
-                            <td>{value.id}</td>
-                            <td>{value.traffic_jam_level}</td>
-                            <td>{value.name}</td>
-                        </tr>
-                    })}
+            {
+                (() => {
+                    if (isLoading) {
+                        return <Spinner animation="border" role="status">
+                            <span className="sr-only">Loading...</span>
+                        </Spinner>
+                    } else {
+                        return <Table striped bordered hover>
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>id Way</th>
+                                <th>traffic jams level</th>
+                                <th>Street Name</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {tableData.map((value, index) => {
+                                return <tr key={uuid()}>
+                                    <td>{index}</td>
+                                    <td>{value.id}</td>
+                                    <td>{value.traffic_jam_level}</td>
+                                    <td>{value.name}</td>
+                                </tr>
+                            })}
 
-                </tbody>
-            </Table>
+                            </tbody>
+                        </Table>
+                    }
+                })()
+            }
+
         </MainContainer>
     </>
 }

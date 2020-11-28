@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {Dropdown, Form, Button, FormControl} from "react-bootstrap";
+import {Dropdown, Form, Button, FormControl, Spinner} from "react-bootstrap";
 import MainContainer from "../containers/MainContainer";
 import axios from 'axios';
 
@@ -11,6 +11,7 @@ const RELATION = "relation"
 export default function Data() {
     const [file, setFile] = useState("");
     const [typeCollection, setTypeCollection] = useState(NODE)
+    const [isLoading, setIsLoading] = useState(false);
 
     const onFileChange = event => {
         setFile(event.target.files[0]);
@@ -23,9 +24,11 @@ export default function Data() {
             file,
             file.name
         );
+        setIsLoading(true);
 
         axios.post("/api/bd", formData).then(res => {
             console.log(res.status);
+            setIsLoading(false);
         });
     };
 
@@ -65,5 +68,13 @@ export default function Data() {
                 </Button>
             </a>
         </Form>
+        {
+            (() => {
+               if(isLoading)
+                   return <Spinner animation="border" role="status">
+                       <span className="sr-only">Loading...</span>
+                   </Spinner>
+            })()
+        }
     </MainContainer>)
 }

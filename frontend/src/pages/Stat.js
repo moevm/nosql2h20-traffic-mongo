@@ -14,7 +14,7 @@ let data = {
     datasets: [
         {
             label: 'Traffic jam level',
-            data: [12, 19, 3, 5],
+            data: [10, 10, 10, 10],
             backgroundColor: [
                 'rgba(75, 192, 192, 0.2)',
                 'rgba(54, 162, 235, 0.2)',
@@ -59,7 +59,7 @@ const testData = [
 ]
 
 export default function Stat() {
-    let [info, setInfo] = useState({avgTime: "0", avgLevel: 2, data: testData, generalData: [12, 10, 3, 5] })
+    let [info, setInfo] = useState({avgTime: "0", avgLevel: 2, data: testData, generalData: [10, 10, 10, 10] })
     let [category, setCategory] = useState(ALL)
 
     useEffect( () => {

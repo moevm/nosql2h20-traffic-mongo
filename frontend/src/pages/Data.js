@@ -1,10 +1,16 @@
 import React, {useState} from "react";
-import {Form, Button, FormControl} from "react-bootstrap";
+import {Dropdown, Form, Button, FormControl} from "react-bootstrap";
 import MainContainer from "../containers/MainContainer";
 import axios from 'axios';
 
+const NODE = "node"
+const WAY = "way"
+const RELATION = "relation"
+
+
 export default function Data() {
     const [file, setFile] = useState("");
+    const [typeCollection, setTypeCollection] = useState(NODE)
 
     const onFileChange = event => {
         setFile(event.target.files[0]);
@@ -13,7 +19,7 @@ export default function Data() {
     const onFileUpload = () => {
         const formData = new FormData();
         formData.append(
-            "myFile",
+            typeCollection,
             file,
             file.name
         );
@@ -33,6 +39,18 @@ export default function Data() {
                 Import
             </Button>
             <br/>
+            <br/>
+            <Dropdown>
+                <Dropdown.Toggle variant="primary" id="dropdown-basic">
+                    {typeCollection}
+                </Dropdown.Toggle>
+
+                <Dropdown.Menu>
+                    <Dropdown.Item onClick={() => setTypeCollection(NODE)}>{NODE}</Dropdown.Item>
+                    <Dropdown.Item onClick={() => setTypeCollection(WAY)}>{WAY}</Dropdown.Item>
+                    <Dropdown.Item onClick={() => setTypeCollection(RELATION)}>{RELATION}</Dropdown.Item>
+                </Dropdown.Menu>
+            </Dropdown>
             <br/>
             <FormControl
                 type="file"

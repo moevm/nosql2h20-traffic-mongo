@@ -2,6 +2,7 @@ from models.get_stat_info import get_last_path_ways, get_traffic_stat
 from models.find_ways import get_lvl_from_speed
 import json
 
+EPS = 0.01
 
 def get_stat_info(category):
     print("Start getting statistics, category: {}".format(category))
@@ -24,7 +25,7 @@ def get_stat_info(category):
     for i in range(len(ways)):
         data.append(
             {'id': ways[i]['_id'],
-             'time': last_path_len[i] / ways[i]['avg_speed'],
+             'time': last_path_len[i] / (ways[i]['avg_speed'] + EPS),
              'trafficJamLevel': get_lvl_from_speed(ways[i]['avg_speed'])
              }
         )

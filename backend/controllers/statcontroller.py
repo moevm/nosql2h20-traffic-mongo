@@ -4,6 +4,7 @@ import json
 
 EPS = 0.01
 
+
 def get_stat_info(category):
     print("Start getting statistics, category: {}".format(category))
     ways = get_last_path_ways(category)
@@ -17,7 +18,8 @@ def get_stat_info(category):
         speed = way['avg_speed']
         avg_speed += speed
         avg += get_lvl_from_speed(speed)
-    avg /= len(ways)
+    if len(ways) != 0:
+        avg /= len(ways)
     with open('last_path_len.json') as file:
         last_path_len = json.load(file)
         last_path_len = last_path_len['last_path_lens']

@@ -4,7 +4,7 @@ from pymongo.errors import BulkWriteError
 import json
 
 
-def import_collection(collection_name, data):
+def pls_import_collection(collection_name, data):
     db = get_mongo()[DB_NAME]
     collection = db.get_collection(collection_name)
     try:

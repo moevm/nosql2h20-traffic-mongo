@@ -71,7 +71,7 @@ export default function Traffic() {
             {
                 (() => {
                     if (isLoading) {
-                        return <Spinner animation="border" role="status">
+                        return <Spinner animation="border"  role="status">
                             <span className="sr-only">Loading...</span>
                         </Spinner>
                     } else {

@@ -16,30 +16,33 @@ def get_last_path_ways(category):
 
 
 def get_ways(nodes, category):
-    ways = []
-    for i in range(len(nodes) - 1):
-        comm_way = find_common_way(nodes[i], nodes[i+1], category)
-        if comm_way is not None:
-            ways.append(comm_way)
-    return ways
-
-
-def find_common_way(node_id1, node_id2, category):
     db = get_mongo()[DB_NAME]
+    node_pairs = []
+    for i in range(len(nodes) - 1):
+        node_pairs.append(
+            {
+                'nodes':
+                    {
+                        '$all': [nodes[i], nodes[i + 1]]
+                    }
+            }
+        )
     speed_limit = (get_speed_from_lvl(category[1])[0], get_speed_from_lvl(category[0])[1])
-    way = db.ways.find_one(
+    ways = db.ways.find(
         {
-            'nodes': {
-                '$all': [node_id1, node_id2]
-            },
-            'avg_speed':
-                {
-                    '$gte': speed_limit[0],
-                    '$lte': speed_limit[1]
-                }
+            '$and':
+                [
+                    {'$or': node_pairs},
+                    {'avg_speed':
+                        {
+                            '$gte': speed_limit[0],
+                            '$lte': speed_limit[1]
+                        }
+                    }
+                ]
         }
     )
-    return way
+    return list(ways)
 
 
 def get_traffic_stat():

@@ -8,10 +8,6 @@ EPS = 0.01
 def get_stat_info(category):
     print("Start getting statistics, category: {}".format(category))
     ways = get_last_path_ways(category)
-    if len(ways) == 0:
-        return {
-            'error': 'No such ways'
-        }
     avg = 0
     avg_speed = 0
     for way in ways:
@@ -20,9 +16,12 @@ def get_stat_info(category):
         avg += get_lvl_from_speed(speed)
     if len(ways) != 0:
         avg /= len(ways)
-    with open('last_path_len.json') as file:
-        last_path_len = json.load(file)
-        last_path_len = last_path_len['last_path_lens']
+    try:
+        with open('last_path_len.json') as file:
+            last_path_len = json.load(file)
+            last_path_len = last_path_len['last_path_lens']
+    except BaseException:
+        last_path_len = []
     data = []
     for i in range(len(ways)):
         data.append(

@@ -19,10 +19,10 @@ def find_paths(x0, y0, x1, y1):
 
 def find_nearest_node(x, y):
     dbnodes = db.nodes
-    nearest_nodes = None
+    nearest_nodes = []
     range = FIND_RANGE
-    while nearest_nodes is None:
-        nearest_nodes = dbnodes.find({
+    while not nearest_nodes:
+        nearest_nodes = list(dbnodes.find({
             'lon': {
                 '$gt': y - range,
                 '$lt': y + range
@@ -34,7 +34,7 @@ def find_nearest_node(x, y):
             'in_ways': {
                 '$ne': []
             }
-        })
+        }))
         range += FIND_RANGE
     return find_min_distance(x, y, nearest_nodes)
 

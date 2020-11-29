@@ -3,9 +3,9 @@ import {Dropdown, Form, Button, FormControl, Spinner} from "react-bootstrap";
 import MainContainer from "../containers/MainContainer";
 import axios from 'axios';
 
-const NODE = "node"
-const WAY = "way"
-const RELATION = "relation"
+const NODE = "nodes"
+const WAY = "ways"
+const RELATION = "relations"
 
 
 export default function Data() {

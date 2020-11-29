@@ -6,6 +6,9 @@ import numpy
 db = get_mongo()[DB_NAME]
 FIND_RANGE = 0.001
 
+CORRECT_HIGHWAY_TAGS = ['motorway', 'motorway_link', 'trunk', 'trunk_link', 'primary', 'primary_link', 'secondary',
+                        'secondary_link', 'tertiary', 'tertiary_link', 'unclassified', 'unclassified_link',
+                        'residential', 'residential_link', 'living_street']
 
 def find_paths(x0, y0, x1, y1):
     nodeid_from = find_nearest_node(x0, y0)
@@ -21,7 +24,8 @@ def find_nearest_node(x, y):
     dbnodes = db.nodes
     nearest_nodes = []
     range = FIND_RANGE
-    while not nearest_nodes:
+    nearest_node = None
+    while nearest_node is None:
         nearest_nodes = list(dbnodes.find({
             'lon': {
                 '$gt': y - range,
@@ -36,14 +40,14 @@ def find_nearest_node(x, y):
             }
         }))
         range += FIND_RANGE
-    return find_min_distance(x, y, nearest_nodes)
+        nearest_node = find_min_distance(x, y, nearest_nodes)
+    return nearest_node
 
 
 def find_min_distance(x0, y0, nodes):
     a = numpy.array([x0, y0])
-    res = nodes[0]['_id']
-    b = numpy.array(get_node_coords(nodes[0]['_id']))
-    min_dist = numpy.linalg.norm(a - b)
+    res = None
+    min_dist = 1
     for node in nodes:
         useless_node = True
         way_ids = node['in_ways']
@@ -52,9 +56,10 @@ def find_min_distance(x0, y0, nodes):
             if way is None:
                 print('Error: way {} does not match (find_min_distance)'.format(way_id))
             else:
-                if 'maxspeed' in way['tags'].keys():
-                    useless_node = False
-                    break
+                if 'highway' in way['tags'].keys():
+                    if way['tags']['highway'] in CORRECT_HIGHWAY_TAGS:
+                        useless_node = False
+                        break
         if useless_node:
             continue
         b = numpy.array([node['lat'], node['lon']])

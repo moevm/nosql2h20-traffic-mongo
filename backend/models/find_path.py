@@ -2,13 +2,17 @@ from models.get_model import get_mongo, DB_NAME
 from math import radians
 import json
 import numpy
+import time
+
 # this is mongo!
 db = get_mongo()[DB_NAME]
 FIND_RANGE = 0.001
 
 CORRECT_HIGHWAY_TAGS = ['motorway', 'motorway_link', 'trunk', 'trunk_link', 'primary', 'primary_link', 'secondary',
-                        'secondary_link', 'tertiary', 'tertiary_link', 'unclassified', 'unclassified_link',
-                        'residential', 'residential_link', 'living_street']
+                        'secondary_link', 'tertiary', 'tertiary_link', 'unclassified', 'unclassified_link']
+
+TIMEOUT = 30
+
 
 def find_paths(x0, y0, x1, y1):
     nodeid_from = find_nearest_node(x0, y0)
@@ -75,6 +79,9 @@ def find_way(nodeid_from, nodeid_to):
     passed_nodes = {}
     print(f'Searching for way: from {nodeid_from} to {nodeid_to}')
     is_found = False
+    start_time = time.time()
+    cur_proc_time = 0
+    cause = 'Cannot find way!'
     while len(nodes_list) > 0:
         nodes_list = sorted(nodes_list, key=lambda node: node[0])
         curr_el = nodes_list.pop(0)
@@ -84,8 +91,12 @@ def find_way(nodeid_from, nodeid_to):
             is_found = True
             print("Way was found!")
             break
-        if len(nodes_list) > 20000:
+        if cur_proc_time - int(time.time() - start_time) != 0:
+            cur_proc_time = int(time.time() - start_time)
+            print("Searching for a path, processing time: {}".format(cur_proc_time))
+        if cur_proc_time > TIMEOUT:
             is_found = False
+            cause = "Time-out"
             break
         neighb_nodes = get_neighb_nodes(curr)
         for node in neighb_nodes:
@@ -105,7 +116,7 @@ def find_way(nodeid_from, nodeid_to):
         print(f'Way length is {sum(last_path_len)}')
         return res
     else:
-        print('Cannot find way!')
+        print(cause)
         return [get_node_coords(nodeid_from), get_node_coords(nodeid_to)]
 
 
@@ -116,17 +127,16 @@ def get_neighb_nodes(node_id):
         return res
     for way_id in node['in_ways']:
         way = db.ways.find_one({'_id': way_id})
-        if 'maxspeed' not in way['tags'].keys():
+        if 'highway' in way['tags'].keys():
+            if way['tags']['highway'] not in CORRECT_HIGHWAY_TAGS:
+                continue
+        else:
             continue
         nodes_in_way = way['nodes']
         index = nodes_in_way.index(node_id)
-        if index is 0:
-            res.append(nodes_in_way[index+1])
-        elif index is len(nodes_in_way)-1:
-            res.append(nodes_in_way[index-1])
-        else:
-            res.append(nodes_in_way[index + 1])
-            res.append(nodes_in_way[index-1])
+        if index is len(nodes_in_way) - 1:
+            continue
+        res.append(nodes_in_way[index + 1])
     return res
 
 
@@ -162,7 +172,7 @@ def find_path_len(path):
     l = []
     R = 6371
     for i in range(len(path) - 1):
-        lat1, lat2 = (path[i][0], path[i+1][0])
+        lat1, lat2 = (path[i][0], path[i + 1][0])
         lon1, lon2 = (path[i][1], path[i + 1][1])
         lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
         sin1 = numpy.sin((lat1 - lat2) / 2)

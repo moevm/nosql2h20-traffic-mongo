@@ -23,13 +23,14 @@ def get_stat_info(category):
     except BaseException:
         last_path_len = []
     data = []
-    for i in range(len(ways)):
-        data.append(
-            {'id': ways[i]['_id'],
-             'time': last_path_len[i] / (ways[i]['avg_speed'] + EPS),
-             'trafficJamLevel': get_lvl_from_speed(ways[i]['avg_speed'])
-             }
-        )
+    if last_path_len:
+        for i in range(len(ways)):
+            data.append(
+                {'id': ways[i]['_id'],
+                 'time': last_path_len[i] / (ways[i]['avg_speed'] + EPS),
+                 'trafficJamLevel': get_lvl_from_speed(ways[i]['avg_speed'])
+                 }
+            )
     time = sum([el['time'] for el in data])
     result = {
         'avgTime': time,

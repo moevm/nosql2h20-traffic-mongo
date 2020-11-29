@@ -27,8 +27,17 @@ export default function Data() {
         setIsLoading(true);
 
         axios.post("/api/bd", formData).then(res => {
-            console.log(res.status);
-            setIsLoading(false);
+            console.log(res.data);
+            console.log(res.data["error"]);
+            console.log("error" in res.data);
+            if ("error" in res.data) {
+                alert(res.data["error"])
+                setIsLoading(false);
+            } else {
+                console.log(res.status);
+                setIsLoading(false);
+            }
+
         });
     };
 

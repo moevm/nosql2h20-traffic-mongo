@@ -67,8 +67,12 @@ export default function Stat() {
             fetch(`/api/stat?category=${category}`)
                 .then(res => res.json())
                 .then(result => {
-                    setInfo(result);
-                    setIsLoading(false);
+                    if ("error" in result.data) {
+                        alert(result.data["error"])
+                    } else {
+                        setInfo(result);
+                        setIsLoading(false);
+                    }
                 })
                 .catch(err => console.log(err))
         },

@@ -25,8 +25,13 @@ const InteractiveLayer = () => {
         fetch(`/api/map?lon_from=${from[0]}&lat_from=${from[1]}&lon_to=${to[0]}&lat_to=${to[1]}`)
             .then(res => res.json())
             .then(result => {
-                setRawPath(result["path"]);
-                console.log('win');
+                if ("error" in result.data) {
+                    alert(result.data["error"])
+                }
+                else {
+                    setRawPath(result["path"]);
+                    console.log('win');
+                }
             })
             .catch(err => {
                 console.log('ERROR', err);

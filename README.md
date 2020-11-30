@@ -5,7 +5,7 @@
 **Перед запуском проверьте, что у вас свободны порты: 80, 5000, 27017**
 
 ```bash
-docker-compose up # `-d` for daemon mode
+bash build.sh
 ```
 
 > go to http://localhost

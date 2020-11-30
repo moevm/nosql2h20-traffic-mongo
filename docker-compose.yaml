@@ -1,24 +1,21 @@
 version: '3.3'
 services:
     mongo:
-        network_mode: "host"
         image: andregavril/nosql2h20-traffic-mongo
         restart: always
-        ports:
-            - "27017:27017"
     backend:
-        network_mode: "host"
         build:
           context: ./backend
         container_name: mse_openstreetmap_backend
-        ports:
-            - "5000:5000"
         environment:
             - PYTHONUNBUFFERED=1
         depends_on:
             - mongo
     frontend:
-        network_mode: "host"
         build:
           context: ./frontend
         container_name: mse_openstreetmap_frontend
+        ports:
+            - "7000:5000"
+        depends_on:
+            - backend

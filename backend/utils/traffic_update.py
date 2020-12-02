@@ -13,7 +13,7 @@ def start_updating_thread():
 
 
 def update_data():
-    time.sleep(5)
+    time.sleep(60)
     mongo = get_mongo()
     db = mongo[DB_NAME]
     if mongo is None:
@@ -23,7 +23,6 @@ def update_data():
     print("Second thread started")
     while True:
         update_all_at_once(db.ways.find(), db)
-        time.sleep(10)
 
 
 def update_all_at_once(ways, db):

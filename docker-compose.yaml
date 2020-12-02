@@ -2,6 +2,7 @@ version: '3.3'
 services:
     mongo:
         image: andregavril/nosql2h20-traffic-mongo
+        container_name: mse_openstreetmap_mongo
         restart: always
     backend:
         build:
